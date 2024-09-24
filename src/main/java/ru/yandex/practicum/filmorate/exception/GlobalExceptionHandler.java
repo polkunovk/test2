@@ -17,8 +17,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<Map<String, String>> handleValidationException(ValidationException ex) {
+        log.error("Ошибка валидации: {}", ex.getMessage());
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", ex.getMessage());
+
+        if (ex.getMessage().contains("не найден")) {
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
