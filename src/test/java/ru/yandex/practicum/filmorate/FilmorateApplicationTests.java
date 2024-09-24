@@ -145,4 +145,16 @@ class FilmorateApplicationTests {
 		});
 		assertEquals("Фильм с таким ID не найден.", exception.getMessage());
 	}
+
+	@Test
+	void filmCreateWithInvalidReleaseDate() {
+		film.setName("Некорректный фильм");
+		film.setDescription("Описание фильма");
+		film.setReleaseDate(LocalDate.of(3000, 1, 1)); // Неправильная дата
+		film.setDuration(120);
+
+		// Отправка запроса на создание фильма
+		var response = filmController.addFilm(film);
+		assertEquals(400, response.getStatusCodeValue(), "При некорректной дате релиза статус должен быть 400.");
+	}
 }
