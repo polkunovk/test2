@@ -22,10 +22,6 @@ class FilmorateApplicationTests {
 	private final Validator validator = factory.getValidator();
 
 	@Test
-	void contextLoads() {
-	}
-
-	@Test
 	void filmValidationTest() {
 		Film film = new Film();
 
@@ -61,7 +57,7 @@ class FilmorateApplicationTests {
 		User user = new User();
 
 		user.setEmail("");
-		user.setLogin("valid");
+		user.setLogin("validLogin");
 		user.setBirthday(LocalDate.of(2000, 1, 1));
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 		assertFalse(violations.isEmpty(), "Электронная почта не может быть пустой.");
@@ -73,16 +69,19 @@ class FilmorateApplicationTests {
 		user.setEmail("user@user.com");
 		user.setLogin("");
 		violations = validator.validate(user);
-		assertFalse(violations.isEmpty(), "Логин не может быть пустым.");
+		assertFalse(violations.isEmpty(), "Логин должен быть заполнен.");
 
-		user.setLogin("valid");
+		user.setLogin("invalid login");
+		violations = validator.validate(user);
+		assertFalse(violations.isEmpty(), "Логин не должен содержать пробелы.");
+
+		user.setLogin("validLogin");
 		user.setBirthday(LocalDate.of(3000, 1, 1));
 		violations = validator.validate(user);
-		assertFalse(violations.isEmpty(), "Дата рождения неверная.");
+		assertFalse(violations.isEmpty(), "Дата рождения не может быть в будущем.");
 
 		user.setBirthday(LocalDate.of(2000, 1, 1));
 		violations = validator.validate(user);
-		assertTrue(violations.isEmpty(), "Пользователь невалидный.");
+		assertTrue(violations.isEmpty(), "Пользователь должен быть валидным.");
 	}
 }
-
