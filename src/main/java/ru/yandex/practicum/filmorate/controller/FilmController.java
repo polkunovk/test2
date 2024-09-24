@@ -26,12 +26,10 @@ public class FilmController {
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
         log.info("Запрос на добавление фильма: {}", film);
 
-        // Валидация имени фильма (по умолчанию, если пустое)
         if (film.getName() == null || film.getName().isBlank()) {
             film.setName("Название по умолчанию");
         }
 
-        // Проверка даты релиза
         if (film.getReleaseDate() == null) {
             log.warn("Дата релиза отсутствует.");
             throw new ValidationException("Дата релиза не может отсутствовать.");
@@ -52,13 +50,11 @@ public class FilmController {
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
         log.info("Запрос на обновление фильма: {}", film);
 
-        // Валидация ID фильма
         if (film.getId() <= 0 || film.getId() > currentId - 1) {
             log.warn("Попытка обновления несуществующего фильма с ID: {}", film.getId());
             throw new ValidationException("Фильм с таким ID не найден.");
         }
 
-        // Обновление фильма
         films.set(film.getId() - 1, film);
         log.info("Фильм успешно обновлен: {}", film);
         return new ResponseEntity<>(film, HttpStatus.OK);
