@@ -29,7 +29,7 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        if (film.getId() <= 0 || film.getId() > currentId - 1) { // Use currentId to check valid ID range
+        if (film.getId() <= 0 || film.getId() > currentId - 1) {
             log.warn("Попытка обновления фильма с ID: {}", film.getId());
             throw new ValidationException("Фильм с таким ID не найден.");
         }
@@ -41,5 +41,11 @@ public class FilmController {
     @GetMapping
     public List<Film> getAllFilms() {
         return films;
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleValidationException(ValidationException e) {
+        return e.getMessage();
     }
 }

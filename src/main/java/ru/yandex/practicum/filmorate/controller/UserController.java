@@ -32,7 +32,7 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        if (user.getId() <= 0 || user.getId() > currentId - 1) { // Use currentId to check valid ID range
+        if (user.getId() <= 0 || user.getId() > currentId - 1) {
             log.warn("Попытка обновления пользователя с ID: {}", user.getId());
             throw new ValidationException("Пользователь с таким ID не найден.");
         }
@@ -47,5 +47,11 @@ public class UserController {
     @GetMapping
     public List<User> getAllUsers() {
         return users;
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleValidationException(ValidationException e) {
+        return e.getMessage();
     }
 }
