@@ -1,7 +1,12 @@
 package ru.yandex.practicum.filmorate;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -18,13 +23,25 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class FilmorateApplicationTests {
 
+	@Autowired
+	private FilmController filmController; // Внедрение FilmController
+	@Autowired
+	private UserController userController; // Внедрение UserController
+
 	private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 	private final Validator validator = factory.getValidator();
 
+	private Film film;
+	private User user;
+
+	@BeforeEach
+	void setUp() {
+		film = new Film();
+		user = new User();
+	}
+
 	@Test
 	void filmValidationTest() {
-		Film film = new Film();
-
 		// Проверка на пустое название
 		film.setName("");
 		Set<ConstraintViolation<Film>> violations = validator.validate(film);
@@ -60,12 +77,15 @@ class FilmorateApplicationTests {
 		film.setDuration(120);
 		violations = validator.validate(film);
 		assertTrue(violations.isEmpty(), "Фильм должен быть валидным.");
+
+		// Проверка на нулевую продолжительность
+		film.setDuration(0);
+		violations = validator.validate(film);
+		assertFalse(violations.isEmpty(), "Продолжительность фильма должна быть положительным числом.");
 	}
 
 	@Test
 	void userValidationTest() {
-		User user = new User();
-
 		// Проверка на пустую электронную почту
 		user.setEmail("");
 		user.setLogin("validLogin");
@@ -103,5 +123,27 @@ class FilmorateApplicationTests {
 		// Проверка, что если имя отображения не задано, используется логин
 		user.setName(null);
 		assertEquals("validLogin", user.getName(), "Имя отображения должно быть логином, если не задано.");
+
+		// Проверка, что имя отображения может быть задано
+		user.setName("Custom Name");
+		assertEquals("Custom Name", user.getName(), "Имя отображения должно быть заданным именем.");
+	}
+
+	@Test
+	void userUpdateValidationTest() {
+		user.setId(100); // Установите несуществующий ID
+		Exception exception = assertThrows(ValidationException.class, () -> {
+			userController.updateUser(user); // Вызов метода обновления пользователя
+		});
+		assertEquals("Пользователь с таким ID не найден.", exception.getMessage());
+	}
+
+	@Test
+	void filmUpdateValidationTest() {
+		film.setId(100); // Установите несуществующий ID
+		Exception exception = assertThrows(ValidationException.class, () -> {
+			filmController.updateFilm(film); // Вызов метода обновления фильма
+		});
+		assertEquals("Фильм с таким ID не найден.", exception.getMessage());
 	}
 }

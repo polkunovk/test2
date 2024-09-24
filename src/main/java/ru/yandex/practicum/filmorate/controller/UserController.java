@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-//import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import jakarta.validation.Valid;
@@ -16,7 +16,6 @@ import java.util.List;
 public class UserController {
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     private final List<User> users = new ArrayList<>();
-
     private int currentId = 1;
 
     @PostMapping
@@ -31,9 +30,9 @@ public class UserController {
         return user;
     }
 
-  /*  @PutMapping
+    @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        if (user.getId() < 1 || user.getId() > users.size()) {
+        if (user.getId() <= 0 || user.getId() > currentId - 1) { // Use currentId to check valid ID range
             log.warn("Попытка обновления пользователя с ID: {}", user.getId());
             throw new ValidationException("Пользователь с таким ID не найден.");
         }
@@ -43,7 +42,7 @@ public class UserController {
         users.set(user.getId() - 1, user);
         log.info("Пользователь обновлен: {}", user);
         return user;
-    }*/
+    }
 
     @GetMapping
     public List<User> getAllUsers() {
