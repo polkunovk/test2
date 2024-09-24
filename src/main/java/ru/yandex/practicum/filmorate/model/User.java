@@ -4,16 +4,14 @@ import lombok.Data;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
-/**
- * User.
- */
+
 @Data
 public class User {
 
     private int id;
 
     @NotBlank(message = "Электронная почта не может быть пустой.")
-    @Email(message = "Электронная почта должна содержать символ '@' и быть валидной.")
+    @Email(message = "Электронная почта должна содержать '@' и быть валидной.")
     private String email;
 
     @NotBlank(message = "Логин не может быть пустым.")
@@ -22,7 +20,18 @@ public class User {
 
     private String name;
 
-    @NotNull(message = "Дата рождения не может быть null.")
+    @NotNull(message = "Дата рождения не может быть пустой.")
     @PastOrPresent(message = "Дата рождения не может быть в будущем.")
     private LocalDate birthday;
+
+    public String getName() {
+        if (name == null || name.isBlank()) {
+            return login;
+        }
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
