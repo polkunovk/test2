@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class FilmorateApplicationTests {
 
-
 	@Autowired
 	private FilmController filmController;
 	@Autowired
@@ -76,6 +75,14 @@ class FilmorateApplicationTests {
 		film.setDuration(0);
 		violations = validator.validate(film);
 		assertFalse(violations.isEmpty(), "Продолжительность фильма должна быть положительным числом.");
+	}
+
+	@Test
+	void filmNameDefaultTest() {
+		// Если имя фильма не задано, оно должно быть установлено в значение по умолчанию "Unnamed Film"
+		film.setName(null);
+		filmController.addFilm(film);
+		assertEquals("Unnamed Film", film.getName(), "Имя фильма должно быть 'Unnamed Film' по умолчанию, если не задано.");
 	}
 
 	@Test

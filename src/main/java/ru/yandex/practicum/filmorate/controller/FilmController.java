@@ -22,7 +22,7 @@ public class FilmController {
     @ResponseStatus(HttpStatus.CREATED)
     public Film addFilm(@Valid @RequestBody Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
-            film.setName("Фильм без названия");
+            film.setName("Unnamed Film"); // Задаем значение по умолчанию
         }
         film.setId(currentId++);
         films.add(film);
@@ -32,7 +32,7 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        if (film.getId() <= 0 || film.getId() > currentId - 1) { // Use currentId to check valid ID range
+        if (film.getId() <= 0 || film.getId() > currentId - 1) {
             log.warn("Попытка обновления фильма с ID: {}", film.getId());
             throw new ValidationException("Фильм с таким ID не найден.");
         }
@@ -45,5 +45,4 @@ public class FilmController {
     public List<Film> getAllFilms() {
         return films;
     }
-
 }
