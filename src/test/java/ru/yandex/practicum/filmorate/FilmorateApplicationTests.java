@@ -85,3 +85,4 @@ class FilmorateApplicationTests {
 		assertTrue(violations.isEmpty(), "Пользователь невалидный.");
 	}
 }
+
