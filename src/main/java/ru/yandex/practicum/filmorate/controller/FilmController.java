@@ -21,6 +21,9 @@ public class FilmController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Film addFilm(@Valid @RequestBody Film film) {
+        if (film.getName() == null || film.getName().isBlank()) {
+            film.setName("Фильм без названия");
+        }
         film.setId(currentId++);
         films.add(film);
         log.info("Фильм добавлен: {}", film);
