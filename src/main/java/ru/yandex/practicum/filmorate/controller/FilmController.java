@@ -18,13 +18,12 @@ public class FilmController {
     private final Logger log = LoggerFactory.getLogger(FilmController.class);
     private final List<Film> films = new ArrayList<>();
 
+    private int currentId = 1;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Film addFilm(@Valid @RequestBody Film film) {
-        if (film.getReleaseDate() == null || film.getReleaseDate().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата релиза не может быть в будущем.");
-        }
-        film.setId(films.size() + 1);
+        film.setId(currentId++);
         films.add(film);
         log.info("Фильм добавлен: {}", film);
         return film;
@@ -33,7 +32,7 @@ public class FilmController {
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
         if (film.getId() < 1 || film.getId() > films.size()) {
-            log.warn("Обновление  фильма с ID: {}", film.getId());
+            log.warn("Попытка обновления фильма с ID: {}", film.getId());
             throw new ValidationException("Фильм с таким ID не найден.");
         }
         films.set(film.getId() - 1, film);

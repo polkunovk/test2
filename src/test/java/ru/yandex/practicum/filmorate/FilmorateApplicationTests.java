@@ -26,9 +26,6 @@ class FilmorateApplicationTests {
 		Film film = new Film();
 
 		film.setName("");
-		film.setDescription("Описание");
-		film.setReleaseDate(LocalDate.of(2020, 1, 1));
-		film.setDuration(120);
 		Set<ConstraintViolation<Film>> violations = validator.validate(film);
 		assertFalse(violations.isEmpty(), "Название фильма должно быть заполнено.");
 

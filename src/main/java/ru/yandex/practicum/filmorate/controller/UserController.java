@@ -17,13 +17,15 @@ public class UserController {
     private final Logger log = LoggerFactory.getLogger(UserController.class);
     private final List<User> users = new ArrayList<>();
 
+    private int currentId = 1;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User addUser(@Valid @RequestBody User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        user.setId(users.size() + 1);
+        user.setId(currentId++);
         users.add(user);
         log.info("Пользователь добавлен: {}", user);
         return user;
