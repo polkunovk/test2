@@ -24,18 +24,22 @@ public class FilmController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
+        log.info("Запрос на добавление фильма: {}", film);
+
+        // Валидация имени фильма (по умолчанию, если пустое)
+        if (film.getName() == null || film.getName().isBlank()) {
+            film.setName("Название по умолчанию");
+        }
+
+        // Проверка даты релиза
         if (film.getReleaseDate() == null) {
             log.warn("Дата релиза отсутствует.");
-            return ResponseEntity.badRequest().body(null);
+            throw new ValidationException("Дата релиза не может отсутствовать.");
         }
 
         if (film.getReleaseDate().isAfter(LocalDate.now())) {
             log.warn("Некорректная дата релиза: {}", film.getReleaseDate());
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        if (film.getName() == null || film.getName().isEmpty()) {
-            film.setName("Название по умолчанию");
+            throw new ValidationException("Дата релиза не может быть в будущем.");
         }
 
         film.setId(currentId++);
