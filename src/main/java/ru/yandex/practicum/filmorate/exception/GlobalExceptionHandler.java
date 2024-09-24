@@ -20,7 +20,12 @@ public class GlobalExceptionHandler {
         log.error("Ошибка валидации: {}", ex.getMessage());
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+
+        // Здесь изменяем код ответа на 404 для ошибок, связанных с ID
+        if (ex.getMessage().contains("не найден")) {
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND); // 404
+        }
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST); // 400 для других случаев
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
