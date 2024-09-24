@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import java.time.LocalDate;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +25,9 @@ public class FilmController {
         if (film.getName() == null || film.getName().isBlank()) {
             film.setName("Название по умолчанию");
         }
-        // Проверка на null для даты релиза
         if (film.getReleaseDate() == null) {
             log.warn("Дата релиза отсутствует.");
-            throw new ValidationException("Дата релиза не может отсутствовать.");
+            throw new ValidationException("Дата релиза не должна отсутствовать.");
         } else if (film.getReleaseDate().isAfter(LocalDate.now())) {
             log.warn("Некорректная дата релиза: {}", film.getReleaseDate());
             throw new ValidationException("Дата релиза не может быть в будущем.");
@@ -38,12 +36,6 @@ public class FilmController {
         films.add(film);
         log.info("Фильм добавлен: {}", film);
         return film;
-    }
-
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<String> handleValidationException(ValidationException e) {
-        log.error("Ошибка валидации: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage()); // 400
     }
 
     @PutMapping
