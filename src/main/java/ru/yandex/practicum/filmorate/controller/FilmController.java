@@ -28,7 +28,7 @@ public class FilmController {
         return film;
     }
 
-    @PutMapping
+  /*  @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
         if (film.getId() < 1 || film.getId() > films.size()) {
             log.warn("Попытка обновления фильма с ID: {}", film.getId());
@@ -37,7 +37,7 @@ public class FilmController {
         films.set(film.getId() - 1, film);
         log.info("Фильм обновлен: {}", film);
         return film;
-    }
+    }*/
 
     @GetMapping
     public List<Film> getAllFilms() {

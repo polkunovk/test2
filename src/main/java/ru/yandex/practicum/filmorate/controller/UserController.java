@@ -31,7 +31,7 @@ public class UserController {
         return user;
     }
 
-    @PutMapping
+  /*  @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
         if (user.getId() < 1 || user.getId() > users.size()) {
             log.warn("Попытка обновления пользователя с ID: {}", user.getId());
@@ -43,7 +43,7 @@ public class UserController {
         users.set(user.getId() - 1, user);
         log.info("Пользователь обновлен: {}", user);
         return user;
-    }
+    }*/
 
     @GetMapping
     public List<User> getAllUsers() {
