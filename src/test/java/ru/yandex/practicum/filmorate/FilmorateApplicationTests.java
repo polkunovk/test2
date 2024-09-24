@@ -25,6 +25,7 @@ class FilmorateApplicationTests {
 
 	@Autowired
 	private FilmController filmController;
+
 	@Autowired
 	private UserController userController;
 
@@ -84,9 +85,10 @@ class FilmorateApplicationTests {
 		film.setReleaseDate(LocalDate.of(2000, 1, 1));
 		film.setDuration(120);
 
-		filmController.addFilm(film);
+		Film createdFilm = filmController.addFilm(film).getBody();
 
-		assertEquals("Название по умолчанию", film.getName(), "Имя фильма должно быть 'Название по умолчанию' по умолчанию, если не задано.");
+		assertNotNull(createdFilm);
+		assertEquals("Название по умолчанию", createdFilm.getName(), "Имя фильма должно быть 'Название по умолчанию' по умолчанию, если не задано.");
 	}
 
 	@Test
