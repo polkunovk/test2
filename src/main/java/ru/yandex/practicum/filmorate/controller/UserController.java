@@ -23,6 +23,7 @@ public class UserController {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
+        user.setId(users.size() + 1);
         users.add(user);
         log.info("Пользователь добавлен: {}", user);
         return user;
@@ -30,14 +31,14 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        if (user.getId() < 0 || user.getId() >= users.size()) {
-            log.warn("Попытка обновления несуществующего пользователя с ID: {}", user.getId());
+        if (user.getId() < 1 || user.getId() > users.size()) {
+            log.warn("Попытка обновления пользователя с ID: {}", user.getId());
             throw new ValidationException("Пользователь с таким ID не найден.");
         }
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        users.set(user.getId(), user);
+        users.set(user.getId() - 1, user);
         log.info("Пользователь обновлен: {}", user);
         return user;
     }

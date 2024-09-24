@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,10 @@ public class FilmController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Film addFilm(@Valid @RequestBody Film film) {
+        if (film.getReleaseDate() == null || film.getReleaseDate().isAfter(LocalDate.now())) {
+            throw new ValidationException("Дата релиза не может быть в будущем.");
+        }
+        film.setId(films.size() + 1);
         films.add(film);
         log.info("Фильм добавлен: {}", film);
         return film;
@@ -27,11 +32,11 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        if (film.getId() < 0 || film.getId() >= films.size()) {
-            log.warn("Попытка обновления несуществующего фильма с ID: {}", film.getId());
+        if (film.getId() < 1 || film.getId() > films.size()) {
+            log.warn("Обновление  фильма с ID: {}", film.getId());
             throw new ValidationException("Фильм с таким ID не найден.");
         }
-        films.set(film.getId(), film);
+        films.set(film.getId() - 1, film);
         log.info("Фильм обновлен: {}", film);
         return film;
     }
