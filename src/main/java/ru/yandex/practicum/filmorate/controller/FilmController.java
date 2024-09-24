@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import java.time.LocalDate;
 
 import jakarta.validation.Valid;
 import java.util.ArrayList;
@@ -22,7 +23,14 @@ public class FilmController {
     @ResponseStatus(HttpStatus.CREATED)
     public Film addFilm(@Valid @RequestBody Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
-            film.setName("Unnamed Film"); // Задаем значение по умолчанию
+            film.setName("Название по умолчанию");
+        }
+        if (film.getReleaseDate() == null) {
+            log.warn("Дата релиза отсутствует.");
+            throw new ValidationException("Дата релиза не должна отсутствовать.");
+        } else if (film.getReleaseDate().isAfter(LocalDate.now())) {
+            log.warn("Некорректная дата релиза: {}", film.getReleaseDate());
+            throw new ValidationException("Дата релиза не может быть в будущем.");
         }
         film.setId(currentId++);
         films.add(film);

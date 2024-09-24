@@ -79,10 +79,14 @@ class FilmorateApplicationTests {
 
 	@Test
 	void filmNameDefaultTest() {
-		// Если имя фильма не задано, оно должно быть установлено в значение по умолчанию "Unnamed Film"
 		film.setName(null);
+		film.setDescription("Описание фильма");
+		film.setReleaseDate(LocalDate.of(2000, 1, 1));
+		film.setDuration(120);
+
 		filmController.addFilm(film);
-		assertEquals("Unnamed Film", film.getName(), "Имя фильма должно быть 'Unnamed Film' по умолчанию, если не задано.");
+
+		assertEquals("Название по умолчанию", film.getName(), "Имя фильма должно быть 'Название по умолчанию' по умолчанию, если не задано.");
 	}
 
 	@Test
