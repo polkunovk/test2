@@ -30,9 +30,16 @@ public class FilmController {
             film.setName("Название по умолчанию");
         }
 
+        LocalDate earliestReleaseDate = LocalDate.of(1895, 12, 28);
+
         if (film.getReleaseDate() == null) {
             log.warn("Дата релиза отсутствует.");
             throw new ValidationException("Дата релиза не может отсутствовать.");
+        }
+
+        if (film.getReleaseDate().isBefore(earliestReleaseDate)) {
+            log.warn("Некорректная дата релиза: {}", film.getReleaseDate());
+            throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года.");
         }
 
         if (film.getReleaseDate().isAfter(LocalDate.now())) {

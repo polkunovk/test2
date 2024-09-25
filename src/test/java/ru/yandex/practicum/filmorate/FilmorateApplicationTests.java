@@ -145,4 +145,51 @@ class FilmorateApplicationTests {
 		});
 		assertEquals("Фильм с таким ID не найден.", exception.getMessage());
 	}
+//	@Test
+//	void filmReleaseDateValidationTest() {
+//		film.setName("Valid Film");
+//		film.setDescription("Valid Description");
+//		film.setDuration(120);
+//
+//		// Тест: дата релиза раньше 28 декабря 1895 года
+//		film.setReleaseDate(LocalDate.of(1800, 1, 1));
+//		Set<ConstraintViolation<Film>> violations = validator.validate(film);
+//		assertFalse(violations.isEmpty(), "Дата релиза не может быть раньше 28 декабря 1895 года.");
+//
+//		// Тест: дата релиза корректная
+//		film.setReleaseDate(LocalDate.of(1900, 1, 1));
+//		violations = validator.validate(film);
+//		assertTrue(violations.isEmpty(), "Фильм должен быть валидным при правильной дате релиза.");
+//	}
+	@Test
+	void filmCreateFailReleaseDateTest() {
+		film.setName("Valid Film");
+		film.setDescription("Valid Description");
+		film.setDuration(120);
+
+		// Устанавливаем дату релиза раньше 28 декабря 1895 года
+		film.setReleaseDate(LocalDate.of(1800, 1, 1));
+
+		Exception exception = assertThrows(ValidationException.class, () -> {
+			filmController.addFilm(film);
+		});
+
+		assertEquals("Дата релиза не может быть раньше 28 декабря 1895 года.", exception.getMessage());
+	}
+	@Test
+	void filmCreateSuccessTest() {
+		film.setName("Valid Film");
+		film.setDescription("Valid Description");
+		film.setReleaseDate(LocalDate.of(2000, 1, 1));
+		film.setDuration(120);
+
+		Film createdFilm = filmController.addFilm(film).getBody();
+
+		assertNotNull(createdFilm);
+		assertEquals("Valid Film", createdFilm.getName());
+		assertEquals("Valid Description", createdFilm.getDescription());
+		assertEquals(LocalDate.of(2000, 1, 1), createdFilm.getReleaseDate());
+		assertEquals(120, createdFilm.getDuration());
+	}
+
 }
