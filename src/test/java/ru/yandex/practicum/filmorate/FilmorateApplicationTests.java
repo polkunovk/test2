@@ -128,6 +128,7 @@ class FilmorateApplicationTests {
 		assertEquals("Custom Name", user.getName(), "Имя отображения должно быть заданным именем.");
 	}
 
+
 	@Test
 	void userUpdateValidationTest() {
 		user.setId(100);
@@ -145,22 +146,7 @@ class FilmorateApplicationTests {
 		});
 		assertEquals("Фильм с таким ID не найден.", exception.getMessage());
 	}
-//	@Test
-//	void filmReleaseDateValidationTest() {
-//		film.setName("Valid Film");
-//		film.setDescription("Valid Description");
-//		film.setDuration(120);
-//
-//		// Тест: дата релиза раньше 28 декабря 1895 года
-//		film.setReleaseDate(LocalDate.of(1800, 1, 1));
-//		Set<ConstraintViolation<Film>> violations = validator.validate(film);
-//		assertFalse(violations.isEmpty(), "Дата релиза не может быть раньше 28 декабря 1895 года.");
-//
-//		// Тест: дата релиза корректная
-//		film.setReleaseDate(LocalDate.of(1900, 1, 1));
-//		violations = validator.validate(film);
-//		assertTrue(violations.isEmpty(), "Фильм должен быть валидным при правильной дате релиза.");
-//	}
+
 	@Test
 	void filmCreateFailReleaseDateTest() {
 		film.setName("Valid Film");
