@@ -22,39 +22,41 @@ public class FilmController {
     private int currentId = 1;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
         log.info("Запрос на добавление фильма: {}", film);
 
-        if (film.getName() == null || film.getName().isBlank()) {
-            film.setName("Название по умолчанию");
-        }
-
+        // Проверка даты релиза
         if (film.getReleaseDate() == null) {
             log.warn("Дата релиза отсутствует.");
-            throw new ValidationException("Дата релиза не может отсутствовать.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(film);  // возвращаем 400, если дата релиза не указана
         }
 
+        // Если дата релиза в будущем, возвращаем ошибку 400
         if (film.getReleaseDate().isAfter(LocalDate.now())) {
             log.warn("Некорректная дата релиза: {}", film.getReleaseDate());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // возвращаем 400 ошибку, если дата релиза в будущем
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(film);  // возвращаем 400 при некорректной дате
         }
 
+        // Установка ID фильма и его добавление в список
         film.setId(currentId++);
         films.add(film);
         log.info("Фильм успешно добавлен: {}", film);
-        return new ResponseEntity<>(film, HttpStatus.CREATED);  // возвращаем 201, если все прошло успешно
+        return new ResponseEntity<>(film, HttpStatus.CREATED);  // возвращаем 201 при успешном создании
     }
 
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
         log.info("Запрос на обновление фильма: {}", film);
 
+        // Проверка существования фильма по ID
         if (film.getId() <= 0 || film.getId() > currentId - 1) {
             log.warn("Попытка обновления несуществующего фильма с ID: {}", film.getId());
             throw new ValidationException("Фильм с таким ID не найден.");
         }
 
+        // Обновление фильма в списке
         films.set(film.getId() - 1, film);
         log.info("Фильм успешно обновлен: {}", film);
         return new ResponseEntity<>(film, HttpStatus.OK);
