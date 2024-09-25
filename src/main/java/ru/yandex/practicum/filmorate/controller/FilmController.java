@@ -37,13 +37,13 @@ public class FilmController {
 
         if (film.getReleaseDate().isAfter(LocalDate.now())) {
             log.warn("Некорректная дата релиза: {}", film.getReleaseDate());
-            throw new ValidationException("Дата релиза не может быть в будущем.");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // возвращаем 400 ошибку, если дата релиза в будущем
         }
 
         film.setId(currentId++);
         films.add(film);
         log.info("Фильм успешно добавлен: {}", film);
-        return new ResponseEntity<>(film, HttpStatus.CREATED);
+        return new ResponseEntity<>(film, HttpStatus.CREATED);  // возвращаем 201, если все прошло успешно
     }
 
     @PutMapping
