@@ -21,10 +21,9 @@ public class UserController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
         User createdUser = userService.addUser(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);  // Статус 201 Created
     }
 
     @PutMapping
@@ -47,7 +46,7 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable int id) {
         User user = userService.getUserById(id);
         if (user == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         return ResponseEntity.ok(user);
     }
@@ -61,13 +60,13 @@ public class UserController {
     @PutMapping("/{id}/friends/{friendId}")
     public ResponseEntity<Void> addFriend(@PathVariable int id, @PathVariable int friendId) {
         userService.addFriend(id, friendId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();  // 201 Created
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public ResponseEntity<Void> removeFriend(@PathVariable int id, @PathVariable int friendId) {
         userService.removeFriend(id, friendId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();  // 204 No Content
     }
 
     @GetMapping("/{id}/friends")

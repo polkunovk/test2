@@ -21,6 +21,7 @@ public class GlobalExceptionHandler {
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", ex.getMessage());
 
+        // Условие для обработки ошибки "лайк не найден"
         if (ex.getMessage().contains("не найден")) {
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
         }

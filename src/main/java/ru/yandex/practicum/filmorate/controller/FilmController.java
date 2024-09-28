@@ -64,15 +64,19 @@ public class FilmController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping("/{id}/like/{userId}")
-    public ResponseEntity<Void> removeLike(@PathVariable int id, @PathVariable Long userId) {
-        filmService.removeLike(id, userId);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{filmId}/like/{userId}")
+    public ResponseEntity<Void> removeLike(@PathVariable int filmId, @PathVariable int userId) { // Изменено на int
+        try {
+            filmService.removeLike(filmId, userId);
+            return ResponseEntity.noContent().build();
+        } catch (ValidationException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-    @GetMapping("/popular")
-    public ResponseEntity<List<Film>> getPopularFilms(@RequestParam(required = false, defaultValue = "10") int count) {
-        List<Film> films = filmService.getPopularFilms(count);
-        return ResponseEntity.ok(films);
-    }
+//    @GetMapping("/popular")
+//    public ResponseEntity<List<Film>> getPopularFilms(@RequestParam(required = false, defaultValue = "10") int count) {
+//        List<Film> films = filmService.getPopularFilms(count);
+//        return ResponseEntity.ok(films);
+//    }
 }

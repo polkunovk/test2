@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,10 +17,12 @@ public class FilmService {
 
     private static final Logger log = LoggerFactory.getLogger(FilmService.class);
     private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
     private final LocalDate earliestReleaseDate = LocalDate.of(1895, 12, 28);
 
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     public Film addFilm(Film film) {
@@ -78,9 +82,19 @@ public class FilmService {
         film.addLike(userId);
     }
 
-    public void removeLike(int filmId, Long userId) {
-        Film film = getFilmById(filmId);
-        film.removeLike(userId);
+    public void removeLike(int filmId, int userId) { // Изменено на int
+        Film film = filmStorage.getFilmById(filmId);
+        User user = userStorage.getUserById(userId); // Изменено на int
+
+        if (film == null || user == null) {
+            throw new ValidationException("Фильм или пользователь не найдены");
+        }
+
+        if (!film.getLikes().contains((long) userId)) {
+            throw new ValidationException("Лайк не найден");
+        }
+
+        film.getLikes().remove((long) userId); // Приведение userId к Long
     }
 
     public List<Film> getPopularFilms(int count) {
